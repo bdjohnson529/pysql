@@ -4,7 +4,9 @@ io.py
 SQL IO module
 """
 
+import os
 import time
+import shutil
 import pandas as pd
 import numpy as np
 import pyodbc
@@ -101,7 +103,7 @@ def executeQueryFromFile(server, database, file_name):
     return df
 
 
-def writeDfToSQL(df, server, database, table, method='Pandas', driver='SQL+Server', chunksize=200):
+def writeDfToSQL(df, server, database, table, driver='SQL+Server', chunksize=200):
     """
     Writes pandas dataframe to SQL, using either BCP or Pandas.
 
@@ -116,12 +118,13 @@ def writeDfToSQL(df, server, database, table, method='Pandas', driver='SQL+Serve
     :param method: Write method (either 'Pandas', or 'BCP')
     :type method: str
     """
-    if(method == 'Pandas'):
+    print(server)
+    if(server.lower() == 'ksiread'):
         writeWithPandas(df, server, database, table, driver, chunksize)
-    elif(method == 'BCP'):
+    elif(server.lower() in ['ksistaging', 'ksitest']):
         writeWithBCP(df, server, database, table)
     else:
-        print("Invalid method specified.")
+        print("Invalid server specified.")
 
     return None
 
@@ -151,7 +154,7 @@ def writeWithPandas(df, server, database, table, driver='SQL+Server', chunksize=
     start = time.time()
 
     # table name needs to be lower case
-    table_name = table_name.lower()
+    table_name = table.lower()
 
     df.to_sql(table_name, con=engine,
                       if_exists='replace', index=False,
@@ -165,7 +168,7 @@ def writeWithPandas(df, server, database, table, driver='SQL+Server', chunksize=
 
     return None
 
-def writeWithBCP(server, database, table, df):
+def writeWithBCP(df, server, database, table):
     """
     Writes a pandas dataframe to a SQL server instance, using the BCP utility.
     :param server: Server name
@@ -175,13 +178,9 @@ def writeWithBCP(server, database, table, df):
     :param df: dataframe
     :type df: pd.DataFrame
     """
-    if server not in ('KSITEST', 'KSISTAGING'):
-        print("Write permitted only on KISTEST, KSISTAGING")
-        return False
-
     # write dataframe to temp file
     os.makedirs('tmp', exist_ok=True)
-    tmp_file = os.path.abspath("tmp/" + randomWord(10) + ".txt")
+    tmp_file = os.path.abspath("tmp/upload_file.txt")
 
 
     # truncate table on destination server
@@ -190,7 +189,7 @@ def writeWithBCP(server, database, table, df):
     os.system(cmd)
 
     # write df to temp file
-    df.to_csv(tmp_file, index=False, sep="|")
+    df.to_csv(tmp_file, index=False, header=False, sep="|")
 
     # upload temp file to destination server
     cmd = f"bcp {database}.dbo.{table} in \"{tmp_file}\" -c -T -t\"|\" -S {server}"
