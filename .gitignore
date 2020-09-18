@@ -1,3 +1,6 @@
+build
+dist
+pysql_bdjohnson529.egg-info/
 .ipynb_checkpoints
 pysql/__pycache__
 venv
