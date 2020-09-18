@@ -16,3 +16,4 @@ setuptools.setup(
 						'numpy>=1.18.1',
 						'pyodbc>=4.0.0',
                 	]
+)
