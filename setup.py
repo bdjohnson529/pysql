@@ -1,6 +1,5 @@
 import setuptools
 
-
 setuptools.setup(
     name="pysql-bdjohnson529", # Replace with your own username
     version="0.0.1",
@@ -17,4 +16,3 @@ setuptools.setup(
 						'numpy>=1.18.1',
 						'pyodbc>=4.0.0',
                 	]
-)
