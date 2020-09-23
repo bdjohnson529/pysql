@@ -29,7 +29,7 @@ def getTableSchema(server, database, table):
 
 
 
-def readTableFromQuery(server_name, db_name, query):
+def executeQuery(server_name, db_name, query):
     """
     Read table from SQL query, using Pyodbc.
 

@@ -11,7 +11,7 @@ from email.mime.multipart import MIMEMultipart
 
 
 
-def sendEmail(host, sender_email, recipient_email, subject, msg_html):
+def sendEmail(sender_email, recipient_email, subject, msg_html):
 
     msg = MIMEMultipart()
     msg.attach(MIMEText(msg_html, 'html'))
@@ -24,7 +24,7 @@ def sendEmail(host, sender_email, recipient_email, subject, msg_html):
 
 
     # Send the message
-    s = smtplib.SMTP(host)
+    s = smtplib.SMTP('mailrelay.verit.dnv.com:25')
     s.sendmail(sender_email, recipient_email, msg.as_string())
     s.quit()
 
