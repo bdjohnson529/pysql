@@ -200,3 +200,28 @@ def writeWithBCP(df, server, database, table):
     shutil.rmtree('tmp')
 
     return None
+
+
+def uploadFile(filepath, server, database, table):
+    """
+    Upload a file to a SQL server instance, using the BCP utility.
+    :param filepath: File path
+    :type filepath: str
+    :param server: Server name
+    :type server: str
+    :param database: Database name
+    :type database: str
+    :param df: dataframe
+    :type df: pd.DataFrame
+    """
+    # truncate table on destination server
+    query = f"TRUNCATE TABLE {database}.dbo.{table}"
+    cmd = f"sqlcmd -S {server} -h -1 -Q \"{query}\""
+    os.system(cmd)
+
+    # upload temp file to destination server
+    cmd = f"bcp {database}.dbo.{table} in \"{filepath}\" -c -T -t\"|\" -S {server}"
+    os.system(cmd)
+
+
+    return None
