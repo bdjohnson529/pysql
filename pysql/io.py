@@ -118,8 +118,7 @@ def writeDfToSQL(df, server, database, table, driver='SQL+Server', chunksize=200
     :param method: Write method (either 'Pandas', or 'BCP')
     :type method: str
     """
-    print(server)
-    if(server.lower() == 'ksiread'):
+    if(server.lower() in ['ksiread', 'hou1207']):
         writeWithPandas(df, server, database, table, driver, chunksize)
     elif(server.lower() in ['ksistaging', 'ksitest']):
         writeWithBCP(df, server, database, table)
