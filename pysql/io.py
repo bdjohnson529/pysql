@@ -103,31 +103,6 @@ def executeQueryFromFile(server, database, file_name):
     return df
 
 
-def writeDfToSQL(df, server, database, table, driver='SQL+Server', chunksize=200):
-    """
-    Writes pandas dataframe to SQL, using either BCP or Pandas.
-
-    :param df: table
-    :type df: pd.DataFrame
-    :param server: SQL Server - Server name
-    :type server: str
-    :param database: SQL Server - Database name
-    :type database: str
-    :param table: SQL Server - Table name
-    :type table: str
-    :param method: Write method (either 'Pandas', or 'BCP')
-    :type method: str
-    """
-    if(server.lower() in ['ksiread', 'hou1207']):
-        writeWithPandas(df, server, database, table, driver, chunksize)
-    elif(server.lower() in ['ksistaging', 'ksitest']):
-        writeWithBCP(df, server, database, table)
-    else:
-        print("Invalid server specified.")
-
-    return None
-
-
 def writeWithPandas(df, server, database, table, driver='SQL+Server', chunksize=200):
     """
     Wrapper for pd.to_sql()
